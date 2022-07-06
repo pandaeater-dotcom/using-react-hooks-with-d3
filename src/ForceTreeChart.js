@@ -69,6 +69,10 @@ function ForceTreeChart({ data }) {
     return colorChart[nodeGroup];
   };
 
+  const pickLinkColor = (node) => {
+    return pickNodeColor(node.target);
+  }
+
   // will be called initially and on every data change
   useEffect(() => {
     if (!dimensions) return;
@@ -91,13 +95,13 @@ function ForceTreeChart({ data }) {
 
     const simulation = forceSimulation(nodeData)
       .force("charge", forceManyBody().strength(d => (4-d.data.level)*-10))
-      .force('center', d3.forceCenter())
+      .force('center', d3.forceCenter().strength(1))
       .force("y", d3.forceY(0))
       .force("x", d3.forceX(0))
       .force("colide", forceCollide((d) => d.r + 16).iterations(16))
       .force(
         "link",
-        d3.forceLink(linkData).id((d) => d.id).distance(5)
+        d3.forceLink(linkData).id((d) => d.id).distance(10)
       )
       .on("tick", () => {
         console.log("current force", simulation.alpha());
@@ -105,14 +109,14 @@ function ForceTreeChart({ data }) {
         // current alpha text
       });
 
-    const alpha = svg
-      .selectAll(".alpha")
-      .data([data])
-      .join("text")
-      .attr("class", "alpha")
-      .text(simulation.alpha().toFixed(2))
-      .attr("x", -dimensions.width / 2 + 10)
-      .attr("y", -dimensions.height / 2 + 25);
+    // const alpha = svg
+    //   .selectAll(".alpha")
+    //   .data([data])
+    //   .join("text")
+    //   .attr("class", "alpha")
+    //   .text(simulation.alpha().toFixed(2))
+    //   .attr("x", -dimensions.width / 2 + 10)
+    //   .attr("y", -dimensions.height / 2 + 25);
 
     // links
     const link = svg
@@ -120,7 +124,7 @@ function ForceTreeChart({ data }) {
       .data(linkData)
       .join("line")
       .attr("class", "link")
-      .attr("stroke", "black")
+      .attr("stroke", (node) => pickLinkColor(node))
       .attr("fill", "none");
     // .attr("x1", (link) => link.source.x)
     // .attr("y1", (link) => link.source.y)
