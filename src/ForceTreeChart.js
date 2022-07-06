@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import * as d3 from 'd3'
+import * as d3 from "d3";
 import {
   select,
   hierarchy,
@@ -22,29 +22,52 @@ function ForceTreeChart({ data }) {
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
 
-  function drag(simulation) {    
-    function dragstarted(event) {
+  const drag = (simulation) => {
+    const dragstarted = (event) => {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
-    }
-    
-    function dragged(event) {
+    };
+
+    const dragged = (event) => {
       event.subject.fx = event.x;
       event.subject.fy = event.y;
-    }
-    
-    function dragended(event) {
+    };
+
+    const dragended = (event) => {
       if (!event.active) simulation.alphaTarget(0);
       event.subject.fx = null;
       event.subject.fy = null;
-    }
-    
-    return d3.drag()
+    };
+
+    return d3
+      .drag()
       .on("start", dragstarted)
       .on("drag", dragged)
       .on("end", dragended);
-  }
+  };
+
+  const pickNodeRadius = (node) => {
+    if (node.data.level === 0) return 15;
+    else if (node.data.level === 1) return 10;
+    else return 5;
+  };
+
+  const pickNodeColor = (node) => {
+    const colorChart = {
+      0: "#ab4444",
+      1: "#99f6ff",
+      2: "#ffad7d",
+      3: "#8f8f8f",
+      4: "#b8ff91",
+      5: "#cc96ff",
+      6: "#946666",
+      7: "#ffabd9",
+    };
+    const nodeGroup = node.data.group;
+
+    return colorChart[nodeGroup];
+  };
 
   // will be called initially and on every data change
   useEffect(() => {
@@ -63,11 +86,19 @@ function ForceTreeChart({ data }) {
     const root = hierarchy(data);
     const nodeData = root.descendants();
     const linkData = root.links();
+    // console.log(nodeData);
+    // console.log(linkData[0]);
 
     const simulation = forceSimulation(nodeData)
-      .force("charge", forceManyBody().strength(-20))
-      .force("link", d3.forceLink(linkData).id(d => d.id))
-      // .force("collide", forceCollide(30))
+      .force("charge", forceManyBody().strength(d => (4-d.data.level)*-10))
+      .force('center', d3.forceCenter())
+      .force("y", d3.forceY(0))
+      .force("x", d3.forceX(0))
+      .force("colide", forceCollide((d) => d.r + 16).iterations(16))
+      .force(
+        "link",
+        d3.forceLink(linkData).id((d) => d.id).distance(5)
+      )
       .on("tick", () => {
         console.log("current force", simulation.alpha());
 
@@ -90,11 +121,11 @@ function ForceTreeChart({ data }) {
       .join("line")
       .attr("class", "link")
       .attr("stroke", "black")
-      .attr("fill", "none")
-      // .attr("x1", (link) => link.source.x)
-      // .attr("y1", (link) => link.source.y)
-      // .attr("x2", (link) => link.target.x)
-      // .attr("y2", (link) => link.target.y);
+      .attr("fill", "none");
+    // .attr("x1", (link) => link.source.x)
+    // .attr("y1", (link) => link.source.y)
+    // .attr("x2", (link) => link.target.x)
+    // .attr("y2", (link) => link.target.y);
 
     // nodes
     const node = svg
@@ -102,26 +133,27 @@ function ForceTreeChart({ data }) {
       .data(nodeData)
       .join("circle")
       .attr("class", "node")
-      .attr("r", 4)
-      .attr('stroke', '#bafded')
-      .attr('stroke-width', 2)
-      .call(drag(simulation))
-      // .attr("cx", (node) => node.x)
-      // .attr("cy", (node) => node.y);
+      .attr("r", (node) => pickNodeRadius(node))
+      .attr("fill", (node) => pickNodeColor(node))
+      .attr("stroke", "#ffffff")
+      .attr("stroke-width", 1)
+      .call(drag(simulation));
+    // .attr("cx", (node) => node.x)
+    // .attr("cy", (node) => node.y);
 
     // labels
-    const label = svg
-      .selectAll(".label")
-      .data(nodeData)
-      .join("text")
-      .attr("class", "label")
-      // .attr("text-anchor", "middle")
-      .attr("font-size", 15)
-      .attr('dx', 15)
-      .attr('dy', 4)
-      .text((node) => node.data.name)
-      // .attr("x", (node) => node.x)
-      // .attr("y", (node) => node.y);
+    // const label = svg
+    // .selectAll(".label")
+    // .data(nodeData)
+    // .join("text")
+    // .attr("class", "label")
+    // // .attr("text-anchor", "middle")
+    // .attr("font-size", 8)
+    // .attr("dx", 15)
+    // .attr("dy", 4)
+    // .text((node) => node.data.name);
+    // .attr("x", (node) => node.x)
+    // .attr("y", (node) => node.y);
 
     simulation.on("tick", () => {
       //update link positions
@@ -135,13 +167,13 @@ function ForceTreeChart({ data }) {
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
 
       // update label positions
-      label
-        .attr("x", (d) => {
-          return d.x;
-        })
-        .attr("y", (d) => {
-          return d.y;
-        });
+      // label
+      //   .attr("x", (d) => {
+      //     return d.x;
+      //   })
+      //   .attr("y", (d) => {
+      //     return d.y;
+      //   });
     });
 
     // svg.on("mousemove", (event) => {
@@ -149,11 +181,11 @@ function ForceTreeChart({ data }) {
     //   simulation
     //     .force(
     //       "x",
-    //       forceX(x).strength(node => 0.2 + node.depth * 0.15)
+    //       forceX(x).strength(-0.01)
     //     )
     //     .force(
     //       "y",
-    //       forceY(y).strength(node => 0.2 + node.depth * 0.15)
+    //       forceY(y).strength(-0.01)
     //     );
     // });
 

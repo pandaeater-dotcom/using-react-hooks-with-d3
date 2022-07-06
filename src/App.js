@@ -1,10 +1,10 @@
 import React from "react";
 import TreeChart from "./TreeChart";
 import ForceTreeChart from "./ForceTreeChart";
-import ForceGraph from './ForceGraph';
 import * as d3 from "d3";
 // import Video from "./Video";
 import "./App.css";
+import Revaluing from './revaluing.json';
 
 const data = {
   name: "😐",
@@ -30,10 +30,11 @@ const data = {
 };
 
 function App() {
+  console.log(Revaluing)
   return (
     <React.Fragment>
       <h2>🪐 D3 Force Layout</h2>
-      <ForceTreeChart data={data} />
+      <ForceTreeChart data={Revaluing} />
       {/* <ForceGraph nodes={miserables.nodes} links={miserables.links}></ForceGraph> */}
     </React.Fragment>
   );

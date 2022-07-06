@@ -1,0 +1,393 @@
+{
+  "name": "EVERYTHING",
+  "level": 0,
+  "group": 0,
+  "children": [
+    {
+      "name": "PATRIARCHY",
+      "level": 1,
+      "group": 0,
+      "children": [
+        {
+          "name": "Power",
+          "level": 1,
+          "group": 1,
+          "children": [
+            {
+              "name": "Government",
+              "level": 2,
+              "group": 1,
+              "children": [
+                { "name": "Policy & Politics", "level": 2, "group": 1 },
+                { "name": "Global Relations", "level": 2, "group": 1 },
+                { "name": "Government Structure", "level": 2, "group": 1 }
+              ]
+            },
+            { "name": "White Supremacy", "level": 2, "group": 1 },
+            { "name": "Capitalism", "level": 2, "group": 1 },
+            { "name": "Colonialism", "level": 2, "group": 1 },
+            {
+              "name": "Religion",
+              "level": 2,
+              "group": 1,
+              "children": [{ "name": "Spirituality", "level": 2, "group": 1 }]
+            },
+            { "name": "Women/femmes in power", "level": 2, "group": 1 },
+            {
+              "name": "Power Enforcement",
+              "level": 2,
+              "group": 1,
+              "children": [
+                {
+                  "name": "Punitive Models",
+                  "level": 2,
+                  "group": 1,
+                  "children": [
+                    { "name": "Policing", "level": 2, "group": 1 },
+                    { "name": "Prison System", "level": 2, "group": 1 },
+                    {
+                      "name": "Military, War & Conflict",
+                      "level": 2,
+                      "group": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Gender Binary",
+          "level": 1,
+          "group": 2,
+          "children": [
+            { "name": "Gender Discrimination", "level": 2, "group": 2 },
+            {
+              "name": "Sexuality",
+              "level": 2,
+              "group": 2,
+              "children": [
+                { "name": "Please Politics", "level": 2, "group": 2 },
+                { "name": "LGBTQ Communities", "level": 2, "group": 2 }
+              ]
+            },
+            {
+              "name": "Gender Liberation",
+              "level": 2,
+              "group": 2,
+              "children": [
+                { "name": "Men's Liberation", "level": 2, "group": 2 },
+                { "name": "Women's Liberation", "level": 2, "group": 2 },
+                { "name": "Trans Liberation", "level": 2, "group": 2 },
+                { "name": "Representation", "level": 2, "group": 2 }
+              ]
+            },
+            {
+              "name": "Gender Roles",
+              "level": 2,
+              "group": 2,
+              "children": [
+                {
+                  "name": "Reform Essentialism / Biodeterminism",
+                  "level": 2,
+                  "group": 2
+                },
+                {
+                  "name": "Gender Fluididty / Expansion",
+                  "level": 2,
+                  "group": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "VIOLENCE",
+      "level": 1,
+      "group": 3,
+      "children": [
+        {
+          "name": "Gender-based Violence",
+          "level": 2,
+          "group": 3,
+          "children": [
+            { "name": "Transphobia", "level": 2, "group": 3 },
+            { "name": "Homophobia", "level": 2, "group": 3 },
+            { "name": "Sexism & Misogyny", "level": 2, "group": 3 },
+            { "name": "Toxic Masculinity", "level": 2, "group": 3 },
+            {
+              "name": "Rape, Sexual Assault & Sexual Harassment",
+              "level": 2,
+              "group": 3,
+              "children": [
+                { "name": "Masculine Right Of Access", "level": 2, "group": 3 }
+              ]
+            },
+            { "name": "Domestic Violence", "level": 2, "group": 3 },
+            {
+              "name": "Objectification",
+              "level": 2,
+              "group": 3,
+              "children": [
+                { "name": "Autonomy Over Bodies", "level": 2, "group": 3 },
+                {
+                  "name": "Beauty Norms, Standards, & Industries",
+                  "level": 2,
+                  "group": 3
+                },
+                {
+                  "name": "Rethinking Aesthetic, Fashion, Femininity",
+                  "level": 2,
+                  "group": 3
+                },
+                {
+                  "name": "Confidence and Self-Esteem vs Shame",
+                  "level": 2,
+                  "group": 3
+                },
+                { "name": "Body Image", "level": 2, "group": 3 }
+              ]
+            }
+          ]
+        },
+        { "name": "Hate Crimes", "level": 2, "group": 3 },
+        { "name": "Bullying", "level": 2, "group": 3 },
+        {
+          "name": "Safety",
+          "level": 2,
+          "group": 3,
+          "children": [{ "name": "Less Fear", "level": 2, "group": 3 }]
+        }
+      ]
+    },
+    {
+      "name": "HEALTH",
+      "level": 1,
+      "group": 4,
+      "children": [
+        {
+          "name": "Healing",
+          "level": 2,
+          "group": 4,
+          "children": [
+            { "name": "Women & Femme Health", "level": 2, "group": 4 }
+          ]
+        },
+        {
+          "name": "Healthcare",
+          "level": 2,
+          "group": 4,
+          "children": [
+            { "name": "Patient-centered", "level": 2, "group": 4 },
+            { "name": "Preventative Care", "level": 2, "group": 4 },
+            { "name": "Medical Industrial Complex", "level": 2, "group": 4 },
+            { "name": "Holistic", "level": 2, "group": 4 },
+            { "name": "Reproductive Rights & Care", "level": 2, "group": 4 }
+          ]
+        },
+        { "name": "Health Behaviour", "level": 2, "group": 4 },
+        {
+          "name": "Mental Health",
+          "level": 2,
+          "group": 4,
+          "children": [{ "name": "Suicide", "level": 2, "group": 4 }]
+        }
+      ]
+    },
+    {
+      "name": "Epistemological",
+      "level": 2,
+      "group": 5,
+      "children": [
+        { "name": "Shift in Value Systems", "level": 2, "group": 5 },
+        {
+          "name": "Valuing First Nations Knowledge / Decolonization",
+          "level": 2,
+          "group": 5
+        },
+        { "name": "Language", "level": 2, "group": 5 },
+        {
+          "name": "Broader understanding of human experiences",
+          "level": 2,
+          "group": 5
+        },
+        { "name": "Idea Expansion", "level": 2, "group": 5 },
+        { "name": "Imaginative", "level": 2, "group": 5 }
+      ]
+    },
+    {
+      "name": "Ontological",
+      "level": 2,
+      "group": 5,
+      "children": [
+        { "name": "Ownership & Consumerism", "level": 2, "group": 5 },
+        { "name": "Diversity & Complexity", "level": 2, "group": 5 },
+        { "name": "Authenticity & Self Determination", "level": 2, "group": 5 },
+        { "name": "Curiosity", "level": 2, "group": 5 },
+        { "name": "Self Expression", "level": 2, "group": 5 },
+        { "name": "The Planet / Environment", "level": 2, "group": 5 },
+        { "name": "Agency / Empowering", "level": 2, "group": 5 },
+        { "name": "Peace", "level": 2, "group": 5 },
+        { "name": "Self Awareness", "level": 2, "group": 5 },
+        { "name": "Creativity & Art", "level": 2, "group": 5 },
+        { "name": "Exploration", "level": 2, "group": 5 }
+      ]
+    },
+    {
+      "name": "Phenomenological",
+      "level": 2,
+      "group": 5,
+      "children": [
+        { "name": "Less Superficial", "level": 2, "group": 5 },
+        { "name": "Balanced", "level": 2, "group": 5 },
+        { "name": "Less Suffering", "level": 2, "group": 5 },
+        { "name": "Celebratory / Brighter World", "level": 2, "group": 5 },
+        { "name": "Less Hierarchy & Competitiveness", "level": 2, "group": 5 },
+        { "name": "Freedom & Liberation ", "level": 2, "group": 5 },
+        { "name": "Richer Life / Quality of Life", "level": 2, "group": 5 }
+      ]
+    },
+    {
+      "name": "WORK",
+      "level": 1,
+      "group": 6,
+      "children": [
+        { "name": "Progress", "level": 2, "group": 6 },
+        { "name": "Parental Leave & Childcare", "level": 2, "group": 6 },
+        { "name": "Research", "level": 2, "group": 6 },
+        {
+          "name": "Masculine Domains",
+          "level": 2,
+          "group": 6,
+          "children": [
+            { "name": "Public Sphere", "level": 2, "group": 6 },
+            { "name": "Academia", "level": 2, "group": 6 },
+            { "name": "Sports / Athletics", "level": 2, "group": 6 },
+            { "name": "Leadership", "level": 2, "group": 6 },
+            { "name": "STEM", "level": 2, "group": 6 },
+            { "name": "Trades", "level": 2, "group": 6 },
+            { "name": "Business", "level": 2, "group": 6 }
+          ]
+        },
+        { "name": "Education & School", "level": 2, "group": 6 },
+        { "name": "Work-Life Balance", "level": 2, "group": 6 },
+        {
+          "name": "Economic",
+          "level": 2,
+          "group": 6,
+          "children": [
+            { "name": "Job Equity", "level": 2, "group": 6 },
+            { "name": "Wealth Gap", "level": 2, "group": 6 }
+          ]
+        },
+        { "name": "Teamwork", "level": 2, "group": 6 },
+        {
+          "name": "Valuing Feminized Work & Skills",
+          "level": 2,
+          "group": 6,
+          "children": [
+            { "name": "Caring Professions", "level": 2, "group": 6 },
+            {
+              "name": "Underpaid & Under-recognized Work",
+              "level": 2,
+              "group": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "RELATIONS AND RELATING",
+      "level": 1,
+      "group": 7,
+      "children": [
+        {
+          "name": "Relationships / Treating of Others",
+          "level": 2,
+          "group": 7,
+          "children": [
+            {
+              "name": "Family Structures & Dynamics",
+              "level": 2,
+              "group": 7,
+              "children": [
+                { "name": "Home Life", "level": 2, "group": 7 },
+                { "name": "Divison of Labour", "level": 2, "group": 7 }
+              ]
+            },
+            { "name": "Marriage", "level": 2, "group": 7 },
+            { "name": "Inter-group Relations", "level": 2, "group": 7 },
+            { "name": "Human-centered Whole People", "level": 2, "group": 7 },
+            {
+              "name": "Healthier Families, Relationships & Communities",
+              "level": 2,
+              "group": 7
+            },
+            {
+              "name": "Interpersonal Relationships & Intimate Partners",
+              "level": 2,
+              "group": 7
+            },
+            {
+              "name": "Respect & Acceptance / Inclusion",
+              "level": 2,
+              "group": 7
+            },
+            {
+              "name": "Parenting & Children",
+              "level": 2,
+              "group": 7,
+              "children": [{ "name": "Childhood", "level": 2, "group": 7 }]
+            }
+          ]
+        },
+        {
+          "name": "Communication",
+          "level": 2,
+          "group": 7,
+          "children": [
+            { "name": "Listened to / Taken Seriously", "level": 2, "group": 7 },
+            { "name": "Problem Solving", "level": 2, "group": 7 }
+          ]
+        },
+        {
+          "name": "Communal",
+          "level": 2,
+          "group": 7,
+          "children": [
+            { "name": "Giving & Sharing", "level": 2, "group": 7 },
+            {
+              "name": "Interdependence & Interconnectivity",
+              "level": 2,
+              "group": 7
+            },
+            { "name": "Community-centered", "level": 2, "group": 7 },
+            { "name": "Equity & Equality", "level": 2, "group": 7 },
+            { "name": "Collaborative & Cooperative", "level": 2, "group": 7 },
+            { "name": "Communities of Care", "level": 2, "group": 7 },
+            { "name": "Nurturance", "level": 2, "group": 7 }
+          ]
+        },
+        {
+          "name": "Emotional Intelligence / Softness / Kindess",
+          "level": 2,
+          "group": 7,
+          "children": [
+            {
+              "name": "Empathy",
+              "level": 2,
+              "group": 7,
+              "children": [
+                { "name": "Perspective Taking", "level": 2, "group": 7 },
+                { "name": "Allyship / Activism", "level": 2, "group": 7 },
+                { "name": "Accessibility", "level": 2, "group": 7 }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
