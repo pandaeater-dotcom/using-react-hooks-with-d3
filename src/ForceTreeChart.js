@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import * as d3 from 'd3'
 import {
   select,
   hierarchy,
@@ -8,7 +9,7 @@ import {
   forceX,
   forceY,
   forceCollide,
-  forceRadial
+  forceRadial,
 } from "d3";
 import useResizeObserver from "./useResizeObserver";
 
@@ -21,6 +22,30 @@ function ForceTreeChart({ data }) {
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
 
+  function drag(simulation) {    
+    function dragstarted(event) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+    
+    function dragged(event) {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+    
+    function dragended(event) {
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+    
+    return d3.drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended);
+  }
+
   // will be called initially and on every data change
   useEffect(() => {
     if (!dimensions) return;
@@ -31,7 +56,7 @@ function ForceTreeChart({ data }) {
       -dimensions.width / 2,
       -dimensions.height / 2,
       dimensions.width,
-      dimensions.height
+      dimensions.height,
     ]);
 
     // d3 util to work with hierarchical data
@@ -40,89 +65,117 @@ function ForceTreeChart({ data }) {
     const linkData = root.links();
 
     const simulation = forceSimulation(nodeData)
-      .force("charge", forceManyBody().strength(-30))
-      .force("collide", forceCollide(30))
+      .force("charge", forceManyBody().strength(-20))
+      .force("link", d3.forceLink(linkData).id(d => d.id))
+      // .force("collide", forceCollide(30))
       .on("tick", () => {
         console.log("current force", simulation.alpha());
 
         // current alpha text
-        svg
-          .selectAll(".alpha")
-          .data([data])
-          .join("text")
-          .attr("class", "alpha")
-          .text(simulation.alpha().toFixed(2))
-          .attr("x", -dimensions.width / 2 + 10)
-          .attr("y", -dimensions.height / 2 + 25);
-
-        // links
-        svg
-          .selectAll(".link")
-          .data(linkData)
-          .join("line")
-          .attr("class", "link")
-          .attr("stroke", "black")
-          .attr("fill", "none")
-          .attr("x1", link => link.source.x)
-          .attr("y1", link => link.source.y)
-          .attr("x2", link => link.target.x)
-          .attr("y2", link => link.target.y);
-
-        // nodes
-        svg
-          .selectAll(".node")
-          .data(nodeData)
-          .join("circle")
-          .attr("class", "node")
-          .attr("r", 4)
-          .attr("cx", node => node.x)
-          .attr("cy", node => node.y);
-
-        // labels
-        svg
-          .selectAll(".label")
-          .data(nodeData)
-          .join("text")
-          .attr("class", "label")
-          .attr("text-anchor", "middle")
-          .attr("font-size", 20)
-          .text(node => node.data.name)
-          .attr("x", node => node.x)
-          .attr("y", node => node.y);
       });
 
-    svg.on("mousemove", (event) => {
-      const [x, y] = pointer(event);
-      simulation
-        .force(
-          "x",
-          forceX(x).strength(node => 0.2 + node.depth * 0.15)
-        )
-        .force(
-          "y",
-          forceY(y).strength(node => 0.2 + node.depth * 0.15)
-        );
+    const alpha = svg
+      .selectAll(".alpha")
+      .data([data])
+      .join("text")
+      .attr("class", "alpha")
+      .text(simulation.alpha().toFixed(2))
+      .attr("x", -dimensions.width / 2 + 10)
+      .attr("y", -dimensions.height / 2 + 25);
+
+    // links
+    const link = svg
+      .selectAll(".link")
+      .data(linkData)
+      .join("line")
+      .attr("class", "link")
+      .attr("stroke", "black")
+      .attr("fill", "none")
+      // .attr("x1", (link) => link.source.x)
+      // .attr("y1", (link) => link.source.y)
+      // .attr("x2", (link) => link.target.x)
+      // .attr("y2", (link) => link.target.y);
+
+    // nodes
+    const node = svg
+      .selectAll(".node")
+      .data(nodeData)
+      .join("circle")
+      .attr("class", "node")
+      .attr("r", 4)
+      .attr('stroke', '#bafded')
+      .attr('stroke-width', 2)
+      .call(drag(simulation))
+      // .attr("cx", (node) => node.x)
+      // .attr("cy", (node) => node.y);
+
+    // labels
+    const label = svg
+      .selectAll(".label")
+      .data(nodeData)
+      .join("text")
+      .attr("class", "label")
+      // .attr("text-anchor", "middle")
+      .attr("font-size", 15)
+      .attr('dx', 15)
+      .attr('dy', 4)
+      .text((node) => node.data.name)
+      // .attr("x", (node) => node.x)
+      // .attr("y", (node) => node.y);
+
+    simulation.on("tick", () => {
+      //update link positions
+      link
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y);
+
+      // update node positions
+      node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+
+      // update label positions
+      label
+        .attr("x", (d) => {
+          return d.x;
+        })
+        .attr("y", (d) => {
+          return d.y;
+        });
     });
 
-    svg.on("click", (event) => {
-      const [x, y] = pointer(event);
-      simulation
-        .alpha(0.5)
-        .restart()
-        .force("orbit", forceRadial(100, x, y).strength(0.8));
+    // svg.on("mousemove", (event) => {
+    //   const [x, y] = pointer(event);
+    //   simulation
+    //     .force(
+    //       "x",
+    //       forceX(x).strength(node => 0.2 + node.depth * 0.15)
+    //     )
+    //     .force(
+    //       "y",
+    //       forceY(y).strength(node => 0.2 + node.depth * 0.15)
+    //     );
+    // });
 
-      // render a circle to show radial force
-      svg
-        .selectAll(".orbit")
-        .data([data])
-        .join("circle")
-        .attr("class", "orbit")
-        .attr("stroke", "green")
-        .attr("fill", "none")
-        .attr("r", 100)
-        .attr("cx", x)
-        .attr("cy", y);
-    });
+    // svg.on("click", (event) => {
+    //   const [x, y] = pointer(event);
+    //   simulation
+    //     .alpha(0.5)
+    //     .restart()
+    //     .force("orbit", forceRadial(100, x, y).strength(0.8));
+
+    //   // render a circle to show radial force
+    //   svg
+    //     .selectAll(".orbit")
+    //     .data([data])
+    //     .join("circle")
+    //     .attr("class", "orbit")
+    //     .attr("stroke", "green")
+    //     .attr("fill", "none")
+    //     .attr("r", 100)
+    //     .attr("cx", x)
+    //     .attr("cy", y);
+    // });
   }, [data, dimensions]);
 
   return (
