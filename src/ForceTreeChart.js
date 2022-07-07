@@ -71,7 +71,18 @@ function ForceTreeChart({ data }) {
 
   const pickLinkColor = (node) => {
     return pickNodeColor(node.target);
-  }
+  };
+
+  const nodeClickHandler = (node) => {
+    console.log('shit')
+    if (node.children) {
+      node._children = node.children;
+      node.children = null;
+    } else {
+      node.children = node._children;
+      node._children = null;
+    }
+  };
 
   // will be called initially and on every data change
   useEffect(() => {
@@ -94,14 +105,20 @@ function ForceTreeChart({ data }) {
     // console.log(linkData[0]);
 
     const simulation = forceSimulation(nodeData)
-      .force("charge", forceManyBody().strength(d => (4-d.data.level)*-10))
-      .force('center', d3.forceCenter().strength(1))
+      .force(
+        "charge",
+        forceManyBody().strength((d) => (4 - d.data.level) * -10)
+      )
+      .force("center", d3.forceCenter().strength(1))
       .force("y", d3.forceY(0))
       .force("x", d3.forceX(0))
       .force("colide", forceCollide((d) => d.r + 16).iterations(16))
       .force(
         "link",
-        d3.forceLink(linkData).id((d) => d.id).distance(10)
+        d3
+          .forceLink(linkData)
+          .id((d) => d.id)
+          .distance(10)
       )
       .on("tick", () => {
         console.log("current force", simulation.alpha());
@@ -139,8 +156,9 @@ function ForceTreeChart({ data }) {
       .attr("class", "node")
       .attr("r", (node) => pickNodeRadius(node))
       .attr("fill", (node) => pickNodeColor(node))
-      .attr("stroke", "#ffffff")
+      .attr("stroke", "#000000")
       .attr("stroke-width", 1)
+      .on('click', nodeClickHandler)
       .call(drag(simulation));
     // .attr("cx", (node) => node.x)
     // .attr("cy", (node) => node.y);
