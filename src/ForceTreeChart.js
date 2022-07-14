@@ -1,9 +1,11 @@
-import React, { useRef, useEffect } from "react";
-import * as d3 from "d3";
+import React, { useRef, useEffect, useState } from "react";
 import {
   select,
+  drag,
   hierarchy,
   forceSimulation,
+  forceLink,
+  forceCenter,
   forceManyBody,
   pointer,
   forceX,
@@ -13,81 +15,103 @@ import {
 } from "d3";
 import useResizeObserver from "./useResizeObserver";
 
-/**
- * Component, that renders a force layout for hierarchical data.
- */
+const dragNode = (simulation) => {
+  const dragstarted = (event) => {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    event.subject.fx = event.subject.x;
+    event.subject.fy = event.subject.y;
+  };
 
-function ForceTreeChart({ data }) {
+  const dragged = (event) => {
+    event.subject.fx = event.x;
+    event.subject.fy = event.y;
+  };
+
+  const dragended = (event) => {
+    if (!event.active) simulation.alphaTarget(0);
+    event.subject.fx = null;
+    event.subject.fy = null;
+  };
+
+  return drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended);
+};
+
+const pickNodeRadius = (node) => {
+  if (node.data.level === 0) return 15;
+  else if (node.data.level === 1) return 10;
+  else return 5;
+};
+
+const pickNodeColor = (node) => {
+  const colorChart = {
+    0: "#ab4444",
+    1: "#99f6ff",
+    2: "#ffad7d",
+    3: "#8f8f8f",
+    4: "#b8ff91",
+    5: "#cc96ff",
+    6: "#946666",
+    7: "#ffabd9",
+  };
+  const nodeGroup = node.data.group;
+
+  return colorChart[nodeGroup];
+};
+
+const pickLinkColor = (node) => {
+  return pickNodeColor(node.target);
+};
+
+function ForceTreeChart({ nodeHoverTooltip, initData }) {
+  const [data, setData] = useState({...initData});
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
 
-  const drag = (simulation) => {
-    const dragstarted = (event) => {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
-    };
+  const tooltip = document.querySelector("#graph-tooltip");
+  if (!tooltip) {
+    const tooltipDiv = document.createElement("div");
+    tooltipDiv.classList.add("tooltip");
+    tooltipDiv.style.opacity = "0";
+    tooltipDiv.id = "graph-tooltip";
+    document.body.appendChild(tooltipDiv);
+  }
 
-    const dragged = (event) => {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
-    };
-
-    const dragended = (event) => {
-      if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
-    };
-
-    return d3
-      .drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended);
-  };
-
-  const pickNodeRadius = (node) => {
-    if (node.data.level === 0) return 15;
-    else if (node.data.level === 1) return 10;
-    else return 5;
-  };
-
-  const pickNodeColor = (node) => {
-    const colorChart = {
-      0: "#ab4444",
-      1: "#99f6ff",
-      2: "#ffad7d",
-      3: "#8f8f8f",
-      4: "#b8ff91",
-      5: "#cc96ff",
-      6: "#946666",
-      7: "#ffabd9",
-    };
-    const nodeGroup = node.data.group;
-
-    return colorChart[nodeGroup];
-  };
-
-  const pickLinkColor = (node) => {
-    return pickNodeColor(node.target);
-  };
-
-  const nodeClickHandler = (node) => {
-    console.log('shit')
-    if (node.children) {
-      node._children = node.children;
-      node.children = null;
-    } else {
-      node.children = node._children;
-      node._children = null;
-    }
-  };
-
-  // will be called initially and on every data change
+  const div = select("#graph-tooltip");
   useEffect(() => {
     if (!dimensions) return;
     const svg = select(svgRef.current);
+
+    const addTooltip = (hoverTooltip, d, x, y) => {
+      div.transition().duration(200).style("opacity", 0.9);
+      div
+        .html(hoverTooltip(d))
+        .style("left", `${x}px`)
+        .style("top", `${y - 28}px`);
+    };
+
+    const removeTooltip = () => {
+      div.transition().duration(200).style("opacity", 0);
+    };
+
+    const nodeClickHandler = (node) => {
+      console.log(data === initData)
+      node = node.target.__data__.data;
+      if (node.children) {
+        node._children = node.children;
+        node.children = null;
+        setData({...initData});
+      } else {
+        node.children = node._children;
+        node._children = null;
+        setData({...initData});
+      }
+    };
+
+
 
     // centering workaround
     svg.attr("viewBox", [
@@ -101,24 +125,21 @@ function ForceTreeChart({ data }) {
     const root = hierarchy(data);
     const nodeData = root.descendants();
     const linkData = root.links();
-    // console.log(nodeData);
-    // console.log(linkData[0]);
 
     const simulation = forceSimulation(nodeData)
       .force(
         "charge",
-        forceManyBody().strength((d) => (4 - d.data.level) * -10)
+        forceManyBody().strength((d) => (4 - d.data.level) * -15)
       )
-      .force("center", d3.forceCenter().strength(1))
-      .force("y", d3.forceY(0))
-      .force("x", d3.forceX(0))
-      .force("colide", forceCollide((d) => d.r + 16).iterations(16))
+      .force("center", forceCenter().strength(1))
+      .force("y", forceY())
+      .force("x", forceX())
+      .force("colide", forceCollide((d) => d.r * 4).iterations(3))
       .force(
         "link",
-        d3
-          .forceLink(linkData)
+        forceLink(linkData)
           .id((d) => d.id)
-          .distance(10)
+          .strength(1)
       )
       .on("tick", () => {
         console.log("current force", simulation.alpha());
@@ -143,10 +164,6 @@ function ForceTreeChart({ data }) {
       .attr("class", "link")
       .attr("stroke", (node) => pickLinkColor(node))
       .attr("fill", "none");
-    // .attr("x1", (link) => link.source.x)
-    // .attr("y1", (link) => link.source.y)
-    // .attr("x2", (link) => link.target.x)
-    // .attr("y2", (link) => link.target.y);
 
     // nodes
     const node = svg
@@ -156,12 +173,10 @@ function ForceTreeChart({ data }) {
       .attr("class", "node")
       .attr("r", (node) => pickNodeRadius(node))
       .attr("fill", (node) => pickNodeColor(node))
-      .attr("stroke", "#000000")
-      .attr("stroke-width", 1)
-      .on('click', nodeClickHandler)
-      .call(drag(simulation));
-    // .attr("cx", (node) => node.x)
-    // .attr("cy", (node) => node.y);
+      // .attr("stroke", "#000000")
+      // .attr("stroke-width", 1)
+      .on("click", nodeClickHandler)
+      .call(dragNode(simulation));
 
     // labels
     // const label = svg
@@ -188,6 +203,14 @@ function ForceTreeChart({ data }) {
       // update node positions
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
 
+      node
+        .on("mouseover", (d) => {
+          addTooltip(nodeHoverTooltip, d, d.pageX, d.pageY);
+        })
+        .on("mouseout", () => {
+          removeTooltip();
+        });
+
       // update label positions
       // label
       //   .attr("x", (d) => {
@@ -197,6 +220,10 @@ function ForceTreeChart({ data }) {
       //     return d.y;
       //   });
     });
+
+    node.on("click", (node) => nodeClickHandler(node));
+
+    // node.on('hover', (node) => nodeHoverHandler(node));
 
     // svg.on("mousemove", (event) => {
     //   const [x, y] = pointer(event);
@@ -218,19 +245,10 @@ function ForceTreeChart({ data }) {
     //     .restart()
     //     .force("orbit", forceRadial(100, x, y).strength(0.8));
 
-    //   // render a circle to show radial force
-    //   svg
-    //     .selectAll(".orbit")
-    //     .data([data])
-    //     .join("circle")
-    //     .attr("class", "orbit")
-    //     .attr("stroke", "green")
-    //     .attr("fill", "none")
-    //     .attr("r", 100)
-    //     .attr("cx", x)
-    //     .attr("cy", y);
-    // });
-  }, [data, dimensions]);
+    return () => {
+      console.log("shit");
+    };
+  }, [data, dimensions, nodeHoverTooltip, div, initData]);
 
   return (
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
