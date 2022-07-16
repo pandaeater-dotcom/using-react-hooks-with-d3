@@ -7,11 +7,9 @@ import {
   forceLink,
   forceCenter,
   forceManyBody,
-  pointer,
   forceX,
   forceY,
   forceCollide,
-  forceRadial,
 } from "d3";
 import useResizeObserver from "./useResizeObserver";
 
@@ -65,11 +63,12 @@ const pickLinkColor = (node) => {
   return pickNodeColor(node.target);
 };
 
-function ForceTreeChart({ nodeHoverTooltip, initData }) {
+const ForceTreeChart = ({ nodeHoverTooltip, initData, passNodeLabels }) => {
   const [data, setData] = useState({ ...initData });
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
+  let nodeLabels = [];
 
   const tooltip = document.querySelector("#graph-tooltip");
   if (!tooltip) {
@@ -98,7 +97,7 @@ function ForceTreeChart({ nodeHoverTooltip, initData }) {
     };
 
     const nodeClickHandler = (node) => {
-      console.log(data === initData);
+      console.log(node.x, node.y);
       node = node.target.__data__.data;
       if (node.children) {
         node._children = node.children;
@@ -112,11 +111,38 @@ function ForceTreeChart({ nodeHoverTooltip, initData }) {
     };
 
     const generateLabel = (node) => {
-      <text></text>
-    }
+      <text></text>;
+    };
+
+    // const getNodePositions = (simulation) => {
+    //   return simulation.nodes().reduce(
+    //     (obj, node) => Object.assign(obj, {
+    //       [forceUtils.nodeId(node)]: {
+    //         cx: node.fx || node.x,
+    //         cy: node.fy || node.y,
+    //       },
+    //     }),
+    //     {}
+    //   );
+    // }
+
+    // const getNodeLabelList = (node) => {
+    //   return [...getNodeLabelList(node)]
+    // }
 
     const nodeHoverHandler = (node) => {
-      addTooltip(nodeHoverTooltip, node, node.pageX, node.pageY);
+      // addTooltip(nodeHoverTooltip, node, node.pageX, node.pageY);
+      const nodeLabels = [];
+      hierarchy(node)
+        .descendants()
+        .forEach((item) =>
+          nodeLabels.push({
+            name: item.data.data.name,
+            x: item.data.x,
+            y: item.data.y,
+          })
+        );
+      passNodeLabels(nodeLabels)
     };
 
     // centering workaround
@@ -178,7 +204,7 @@ function ForceTreeChart({ nodeHoverTooltip, initData }) {
       // .attr("stroke", "#000000")
       // .attr("stroke-width", 1)
       .on("click", nodeClickHandler)
-      .on("mouseover", nodeHoverHandler)
+      .on("mouseover", (node) => nodeHoverHandler(node.target.__data__))
       .call(dragNode(simulation));
 
     // labels
@@ -213,8 +239,6 @@ function ForceTreeChart({ nodeHoverTooltip, initData }) {
         .on("mouseout", () => {
           removeTooltip();
         });
-
-      console.log(simulation.alpha())
 
       // update label positions
       // label
@@ -256,7 +280,9 @@ function ForceTreeChart({ nodeHoverTooltip, initData }) {
 
   return (
     <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
-      <svg ref={svgRef}></svg>
+      <svg ref={svgRef}>
+        <g>{nodeLabels}</g>
+      </svg>
     </div>
   );
 }
